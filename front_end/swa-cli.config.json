@@ -1,0 +1,19 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "fit3162": {
+      "appLocation": ".",
+      "outputLocation": "build",
+      "appBuildCommand": "npm run build",
+      "run": "npm start",
+      "appDevserverUrl": "http://localhost:3000",
+      "appName": "fit3162",
+      "resourceGroupName": "fit3162-rg"
+    }
+  },
+  "deploy": {
+    "appLocation": ".",
+    "outputLocation": "build",
+    "deploymentToken": "923f6effc54aacf45d8e8b54099cf355596064dfb62fbed47a39454936bf33e61-0079ef69-bdb0-4b24-986c-0fac8e6c5cae01e23515"
+  }
+}
