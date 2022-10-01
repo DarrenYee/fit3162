@@ -20,8 +20,7 @@ def ApiOverview(request):
         'all_product': '/',
         'Search by ID': '/?product=product_id',
         'Add': '/create',
-        'Update': '/update/pk',
-        'Delete': '/item/pk/delete'
+        'Update': '/update/pk'
     }
   
     return Response(api_urls)
