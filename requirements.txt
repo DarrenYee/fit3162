@@ -6,7 +6,7 @@ charset-normalizer==2.1.1
 click==8.0.1
 colorama==0.4.4
 decorator==4.4.2
-Django==3.0
+Django==3.2
 django-db==0.0.7
 django-extensions==3.2.1
 django-mssql-backend==2.8.1
