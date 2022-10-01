@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'back_end.wsgi.application'
 # settings.py
 DATABASES = {
     'default': {
-        'ENGINE': 'sql_server.pyodbc',
+        'ENGINE': 'mssql',
         'NAME': 'chace-main',
         'USER': 'fit3162',
         'PASSWORD': '##@@Chace@@##12345',
