@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.ApiOverview, name='home'),
     # URL for Products
     path('add_products/', views.add_products, name='add-products'),
-    path('all_products/', views.view_products, name='view-products'),
+    path('products/', views.view_products, name='view-products'),
     path('update_products/', views.update_products, name='update-products'),
     path('delete_products/', views.delete_product, name='delete-products'),
 

@@ -11,8 +11,10 @@ import uuid
 class Product (models.Model):
     productID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, blank=False, default='')
+    stockAmount = models.IntegerField(default=0)
+    pendingStock = models.IntegerField(default=0)
     def __str__(self) -> str:
-        return "%s %s" % (self.productID ,self.name)
+        return "%s %s" % (self.productID ,self.name,self.stockAmount,self.pendingStock)
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)

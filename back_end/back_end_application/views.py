@@ -9,6 +9,7 @@ from rest_framework import serializers, status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 import time
+from uuid import UUID
 # Create your views here.
 
 def home (request):
@@ -170,7 +171,7 @@ def add_batch(request):
         batch.save()
         return Response(batch.data)
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -289,15 +290,18 @@ def view_batch_status(request):
 @permission_classes([IsAuthenticated])
 def add_order(request):
     order = OrderSerializer(data=request.data)
+    exists = False
     # validating for already existing data
     if CustomerOrder.objects.filter(**request.data).exists():
-        raise serializers.ValidationError('This data already exists')
+        exists = True
+    if exists == True:
+        return Response(status=status.HTTP_200_OK,data="Data already exists")
   
     if order.is_valid():
         order.save()
         return Response(order.data)
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -324,6 +328,10 @@ def view_order(request):
 @permission_classes([IsAuthenticated])
 def update_order(request):
     ordID = request.data["customerOrderID"]
+    try:
+        uuid_obj = UUID(ordID, version=4)
+    except ValueError:
+        return Response(status=status.HTTP_200_OK,data = request.data["date"] +"  ")
     order = CustomerOrder.objects.get(customerOrderID = ordID)
     try:
         customerID = request.data["customerID"]    
@@ -338,10 +346,8 @@ def update_order(request):
     
     if date != None:
         order.date = date
-    
     order.save()
-
-    return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK,data = "Order Successfully Updated")
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -350,6 +356,10 @@ def delete_order(request):
         ordID = request.data["customerOrderID"]    
     except KeyError as e:
         ordID = None
+    try:
+        uuid_obj = UUID(ordID, version=4)
+    except ValueError:
+        return Response(status=status.HTTP_200_OK,data = "Order Does Not Exist. Please check your entered value.")
     # checking for the parameters from the URL
     if ordID != None:
         try:
@@ -365,8 +375,15 @@ def delete_order(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_order_content(request):
+    quantity = request.data["quantity"] 
+    if quantity == 0:
+        print (quantity)
+        return Response(status=status.HTTP_200_OK,data = "Quantity cannot be 0")
+    elif quantity < 0:
+        return Response(status=status.HTTP_200_OK,data = "Quantity cannot be negative")
+    else:
+        pass
     order_content = OrderContentSerializer(data=request.data)
-
     # validating for already existing data
     if CustomerOrderContents.objects.filter(**request.data).exists():
         raise serializers.ValidationError('This data already exists')
@@ -412,7 +429,13 @@ def update_order_content(request):
     except KeyError as e:
         product = None
     try:
-        quantity = request.data["quantity"]    
+        quantity = request.data["quantity"] 
+        if quantity == 0:
+            return Response(status=status.HTTP_200_OK,data = "Quantity cannot be 0")
+        elif quantity < 0:
+            return Response(status=status.HTTP_200_OK,data = "Quantity cannot be negative")
+        else:
+            pass   
     except KeyError as e:
         quantity = None
 
@@ -426,7 +449,7 @@ def update_order_content(request):
         ordContent.quantity = quantity
     
     ordContent.save()
-    return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK, data = "Order Content Successfully Updated")
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -444,7 +467,7 @@ def delete_order_content(request):
             return Response(status=status.HTTP_404_NOT_FOUND)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK,data = "Order Content Successfully Deleted")
 
 #View methods for custom user types
 @api_view(['GET'])
@@ -549,22 +572,6 @@ def calculate_eta_for_supplier(request,product_id):
 
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_order_content(request):
-    order_content = OrderContentSerializer(data=request.data)
-
-    # validating for already existing data
-    if CustomerOrderContents.objects.filter(**request.data).exists():
-        raise serializers.ValidationError('This data already exists')
-  
-    if order_content.is_valid():
-        order_content.save()
-        return Response(order_content.data)
-    else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
