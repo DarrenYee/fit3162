@@ -89,7 +89,8 @@ def view_products(request):
     
     # checking for the parameters from the URL
     if request.query_params:
-        products = Product.objects.filter(**request.query_param.dict())
+        prod_id = request.query_params.get('productID')
+        products = Product.objects.filter(productID = prod_id)
     else:
         products = Product.objects.all()
   
