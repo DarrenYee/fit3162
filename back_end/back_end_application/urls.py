@@ -11,6 +11,7 @@ urlpatterns = [
     path('products/', views.view_products, name='view-products'),
     path('update_products/', views.update_products, name='update-products'),
     path('delete_products/', views.delete_product, name='delete-products'),
+    path('low_stock/', views.view_low_on_stock, name='low_stock'),
 
     # URL for Batch
     path('add_batch/', views.add_batch, name='add-batches'),

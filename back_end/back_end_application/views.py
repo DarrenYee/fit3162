@@ -42,6 +42,20 @@ def add_products(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_low_on_stock(request):
+    # checking for the parameters from the URL
+    stock = Product.objects.all().order_by('stockAmount')[:5]
+
+    # if there is something in items else raise error
+    if stock:
+        return JsonResponse(data=list(stock.values()), safe=False)
+
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_stock(request):
