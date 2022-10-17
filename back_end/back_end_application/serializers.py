@@ -29,7 +29,7 @@ class BatchStatusSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerOrder
-        fields = ('customerOrderID', 'customerID','customerOrderStatus','dateCreated','lastUpdated')
+        fields = ('customerOrderID', 'customerID','customerOrderStatus','dateCreated','lastUpdated','orderContents')
 
 class OrderStatusSerializer(serializers.ModelSerializer):
     class Meta:

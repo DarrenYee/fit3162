@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import uuid
+import json
+
 
 
 class Product (models.Model):
@@ -45,13 +47,20 @@ class CustomerOrder(models.Model):
     customerOrderStatus = models.ForeignKey(CustomerOrderStatus,on_delete=models.CASCADE)
     dateCreated = models.DateTimeField()
     lastUpdated = models.DateTimeField()
+    orderContents = models.CharField(max_length=500)
+
+    def set_OC(self, x):
+        self.orderContents = json.dumps(x)
+
+    def get_OC(self):
+        return json.loads(self.orderContents)
 
     @property
     def date_diff(self):
         return (self.lastUpdated - self.dateCreated).days
 
     def __str__(self) -> str:
-        return "%s %s" % (self.customerOrderID, self.customerID, self.customerOrderStatus, self.dateCreated, self.lastUpdated)
+        return "%s %s" % (self.customerOrderID, self.customerID, self.customerOrderStatus, self.dateCreated, self.lastUpdated,self.orderContent)
 
 class BatchStatus (models.Model):
     batchStatusID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

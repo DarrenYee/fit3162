@@ -31,24 +31,24 @@ def ApiOverview(request):
 @permission_classes([IsAuthenticated])
 def add_products(request):
     product = ProductSerializer(data=request.data)
-  
     # validating for already existing data
     if Product.objects.filter(**request.data).exists():
+        # If data already previously added to database, raise validation error and prevent data from being added.
         raise serializers.ValidationError('This data already exists')
-  
+  # if product is valid, then save the data and return the Json containing the data
     if product.is_valid():
         product.save()
         return Response(product.data)
     else:
+        #else, return and error code
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def view_low_on_stock(request):
-    # checking for the parameters from the URL
+    # Calls the database to get the products with the lowest stock amount 
     stock = Product.objects.all().order_by('stockAmount')[:5]
-
-    # if there is something in items else raise error
+    # Returns the list if the list is not empty else raise an error
     if stock:
         return JsonResponse(data=list(stock.values()), safe=False)
 
@@ -567,25 +567,33 @@ def view_supplier_product_by_supplier(request,supplier_id):
 @permission_classes([IsAuthenticated])
 def calculate_eta_for_supplier(request,product_id):
     # checking for the parameters from the URL
+    # Gets the id for completed order status
     done = CustomerOrderStatus.objects.filter(updateType = "Completed").values('updateID')
     completedID = done[0].get('updateID')
+    # Gets all completed orders
     query = CustomerOrder.objects.filter(customerOrderStatus = completedID)
     temp = query.values_list('customerOrderID',flat=True)
+    # Gets the list of order contents that are part of a Completed Order and has the required product id.
     order_content_lst = CustomerOrderContents.objects.filter(customerOrderID__in = temp, product = product_id).values('customerOrderID','supplierID')
     result_list = [0 for _ in range(len(Supplier.objects.all())+7)]
+    # Loops the list obtained above 
     for i in range (len(order_content_lst)):
         order_id = order_content_lst[i].get('customerOrderID')
         supplier_id = order_content_lst[i].get('supplierID')
+        # Gets day taken for this order from creation to completion
         days_taken = query.get(customerOrderID = order_id).date_diff
+        # Increments the result list with the days taken, add new data if not previously added, else increment ecisting data
         if result_list[supplier_id] == 0:
             result_list[supplier_id] = ([supplier_id,product_id,days_taken,1])
         else:
             result_list[supplier_id] = ([supplier_id,product_id,(result_list[supplier_id][2] + days_taken/(result_list[supplier_id][3] + 1)),result_list[supplier_id][3] + 1])
     # if there is something in items else raise error
     if result_list:
+        # Returns a list of [[supplier_id,product_id,average days taken] ....]
         return JsonResponse(data=list(filter(lambda a: a != 0, result_list)), safe=False)
 
     else:
+        #If can't be found, return Error 404
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
