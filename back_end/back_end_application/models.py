@@ -44,10 +44,10 @@ class CustomerOrderStatus (models.Model):
 class CustomerOrder(models.Model):
     customerOrderID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     customerID = models.ForeignKey(Customer,on_delete=models.CASCADE)
-    customerOrderStatus = models.ForeignKey(CustomerOrderStatus,on_delete=models.CASCADE)
+    orderStatus = models.CharField(max_length=150)
     dateCreated = models.DateTimeField()
     lastUpdated = models.DateTimeField()
-    orderContents = models.CharField(max_length=500)
+    products = models.CharField(max_length=2000)
 
     def set_OC(self, x):
         self.orderContents = json.dumps(x)
@@ -60,7 +60,7 @@ class CustomerOrder(models.Model):
         return (self.lastUpdated - self.dateCreated).days
 
     def __str__(self) -> str:
-        return "%s %s" % (self.customerOrderID, self.customerID, self.customerOrderStatus, self.dateCreated, self.lastUpdated,self.orderContent)
+        return "%s %s" % (self.customerOrderID, self.customerID, self.customerOrderStatus, self.dateCreated, self.lastUpdated,self.orderContents)
 
 class BatchStatus (models.Model):
     batchStatusID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

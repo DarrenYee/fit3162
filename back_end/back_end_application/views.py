@@ -305,13 +305,9 @@ def view_batch_status(request):
 @permission_classes([IsAuthenticated])
 def add_order(request):
     order = OrderSerializer(data=request.data)
-    exists = False
     # validating for already existing data
     if CustomerOrder.objects.filter(**request.data).exists():
-        exists = True
-    if exists == True:
-        return Response(status=status.HTTP_200_OK,data="Data already exists")
-  
+        raise serializers.ValidationError('This data already exists')
     if order.is_valid():
         order.save()
         return Response(order.data)

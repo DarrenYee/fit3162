@@ -1,3 +1,4 @@
+from itertools import product
 from django.db.models import fields
 from rest_framework import serializers
 from .models import BatchStatus, Customer, CustomerOrder, CustomerOrderContents, CustomerOrderStatus, Product, Batch, Stock, Supplier, SupplierProduct
