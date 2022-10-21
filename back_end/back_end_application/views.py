@@ -100,19 +100,20 @@ def update_stock (request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def view_products(request):
-    
     # checking for the parameters from the URL
     if request.query_params:
+        # check if the request is search by id
         prod_id = request.query_params.get('productID')
+        # filter products based on product ID
         products = Product.objects.filter(productID = prod_id)
     else:
+        # else retrive all products and return
         products = Product.objects.all()
-  
-    # if there is something in items else raise error
+    # if there is something in pproducts, return the values
     if products:
         return JsonResponse(data=list(products.values()), safe=False)
-
     else:
+        # else, return an error code to the front-end
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['PUT'])
